@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <title>Laracamp by BuildWith Angga</title>
+    <link rel="shortcut icon" href="images/icon_logo.svg" type="image/x-icon">
+    <title>Laracamp Clone by MFA</title>
 </head>
 
 <body>
