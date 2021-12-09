@@ -24,6 +24,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// socialite integration
+Route::get('/sign-in-google', [UserController::class, 'google'])->name('user.login.google');
+Route::get('/auth/google/callback', [UserController::class, 'handleProviderCallBack'])->name('user.google.callback');
+
+// midtrans routes
+Route::get('/payment/success', [CheckoutController::class, 'midtransCallback']);
+Route::post('/payment/success', [CheckoutController::class, 'midtransCallback']);
+
 
 Route::middleware(['auth'])->group(function () {
     // checkout routes
@@ -48,10 +56,6 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-
-// socialite integration
-Route::get('/sign-in-google', [UserController::class, 'google'])->name('user.login.google');
-Route::get('/auth/google/callback', [UserController::class, 'handleProviderCallBack'])->name('user.google.callback');
 
 
 require __DIR__.'/auth.php';
