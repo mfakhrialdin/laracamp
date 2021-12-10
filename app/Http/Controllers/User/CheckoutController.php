@@ -15,9 +15,9 @@ use Midtrans;
 
 class CheckoutController extends Controller
 {
-    public function __contruct()
+    public function __construct()
     {
-        Midtrans\Config::$serverKey = env('MIDTRANS_SERVERKEY');
+        Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
         Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
         Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
@@ -71,6 +71,8 @@ class CheckoutController extends Controller
         $user->email = $data['email'];
         $user->name = $data['name'];
         $user->occupation = $data['occupation'];
+        $user->phone = $data['phone'];
+        $user->address = $data['address'];
         $user->save();
         
 
@@ -149,7 +151,7 @@ class CheckoutController extends Controller
         ];
 
         $item_details[] = [
-            'id'=> $orderID,
+            'id'=> $orderId,
             'price' => $price,
             'quantity' => 1,
             'name' => "Payment for {$checkout->Camp->title} Camp" ,
@@ -174,7 +176,7 @@ class CheckoutController extends Controller
             "shipping_address" => $userData,
         ];
 
-        $midtrans_param =[
+        $midtrans_params =[
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
             'item_details' => $item_details,
@@ -182,7 +184,7 @@ class CheckoutController extends Controller
 
         try {
             //get snap payment page url
-            $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+            $paymentUrl = \Midtrans\Snap::createTransaction($midtrans_params)->redirect_url;
             $checkout->midtrans_url = $paymentUrl;
             $checkout->save();
 
@@ -194,7 +196,7 @@ class CheckoutController extends Controller
 
     public function midtransCallback(Request $request)
     {
-        $notif = new Midtrans\Notification();
+        $notif = $request->method() == 'POST' ? new Midtrans\Notification() : Midtrans\Transaction::status($request->order_id);
 
         $transaction_status = $notif->transaction_status;
         $fraud = $notif->fraud_status;
